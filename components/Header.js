@@ -4,8 +4,14 @@ import logo from "../image/fb-logo.png";
 import { HomeIcon, SearchIcon, FlagIcon, ShoppingCartIcon, PlayIcon, UserGroupIcon, AdjustmentsIcon, ChatIcon, BellIcon, ArrowDownIcon, ViewGridAddIcon, ChevronDoubleDownIcon } from '@heroicons/react/solid'
 import HomeIcons from './HomeIcons';
 import profile from "../image/profile.jpeg";
+import { useSession } from "next-auth/react";
+import { signOut } from "next-auth/react"
+import { data } from 'autoprefixer';
 
 const Header = () => {
+    const { data: session, status } = useSession()
+    if (data) console.log(session);
+    //console.log(data)
     return (
         <div className='sticky top-0 items-center flex shadow-md p-2 lg:px-5 bg-white z-50'>
             {/* <h1 className='text-6xl'>header</h1> */}
@@ -33,8 +39,8 @@ const Header = () => {
             </div>
             <div className='flex items-center justify-end'>
 
-                <Image src={profile} alt="avatar" height={40} width={40} className="inline-block rounded-full ring-2 ring-white" />
-                <h2 className='font-semibold whitespace-nowrap'>Mr.User</h2>
+                <Image onClick={() => signOut} src={session.user.image} alt="avatar" height={40} width={40} className="inline-block rounded-full ring-2 ring-white" />
+                <h2 className='font-semibold whitespace-nowrap'>{session.user.name}</h2>
                 <ViewGridAddIcon className="icon" />
                 <ChatIcon className="icon" />
                 <BellIcon className="icon" />
