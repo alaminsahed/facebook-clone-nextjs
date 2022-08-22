@@ -9,7 +9,7 @@ export default function Home() {
   if (!session) return <Login />
 
   return (
-    <div>
+    <div className='h-screen bg-gray-100 overflow-hidden'>
       <Head>
         Facebook
       </Head>
