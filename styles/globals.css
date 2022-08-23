@@ -6,4 +6,7 @@
     .icon{
         @apply hidden xl:inline-flex h-10 w-10 items-center p-2 ml-1 bg-gray-200 rounded-full  cursor-pointer text-gray-600 hover:text-gray-300;
     }
+    .icon-search{
+        @apply h-10 w-10 flex-grow space-x-1 p-2 justify-center hover:bg-gray-400 rounded-xl cursor-pointer;
+    }
 }
