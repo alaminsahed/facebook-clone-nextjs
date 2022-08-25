@@ -4,6 +4,9 @@ import Image from 'next/image';
 import { CameraIcon, EmojiHappyIcon, VideoCameraIcon } from '@heroicons/react/solid';
 import { db } from '../firebase';
 import { addDoc, collection, serverTimestamp } from "firebase/firestore";
+import { setDoc, doc } from "firebase/firestore";
+import { ref, uploadString, getDownloadURL, getStorage, uploadBytesResumable } from "firebase/storage";
+
 
 const InputBox = () => {
     const inputRef = useRef('');
@@ -26,6 +29,25 @@ const InputBox = () => {
                 email: session.user.email,
                 image: session.user.image,
                 timestamp: serverTimestamp()
+            }).then((docu) => {
+                if (inputImage) {
+                    const storage = getStorage();
+                    const storageRef = ref(storage, `posts/${docu.id}`);
+                    const uploadTask = uploadBytesResumable(storageRef, inputImage, 'data_url');
+                    uploadTask.on('state_changed', null,
+                        (error) => {
+                            alert(error);
+                        },
+                        () => {
+                            getDownloadURL(uploadTask.snapshot.ref)
+                                .then((URL) => {
+                                    setDoc(doc(db, "posts", docu.id), { postImage: URL }, { merge: true });
+                                });
+                        }
+                    )
+                    removeImage();
+                }
+
             });
             console.log("Document written with ID: ", postRef);
         } catch (e) {
@@ -33,6 +55,7 @@ const InputBox = () => {
         }
 
         inputRef.current.value = '';
+
     }
 
     const addPostToImage = (e) => {
