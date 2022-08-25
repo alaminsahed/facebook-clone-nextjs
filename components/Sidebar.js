@@ -16,6 +16,7 @@ const Sidebar = () => {
             <SidebarRow Icon={CalendarIcon} title="Events" />
             <SidebarRow Icon={ClockIcon} title="Memories" />
             <SidebarRow Icon={ChevronDownIcon} title="See More" />
+
         </div>
     );
 };
