@@ -13,8 +13,9 @@ const InputBox = () => {
     const fileRef = useRef(null);
     const { data: session, status } = useSession();
     const [inputImage, setInputImage] = React.useState(null);
+    const [imageUrl, setImageUrl] = React.useState(null);
 
-
+    console.log({ inputImage });
 
 
     const sendPost = (e) => {
@@ -32,8 +33,11 @@ const InputBox = () => {
             }).then((docu) => {
                 if (inputImage) {
                     const storage = getStorage();
+                    const metadata = {
+                        contentType: 'image/jpeg'
+                    };
                     const storageRef = ref(storage, `posts/${docu.id}`);
-                    const uploadTask = uploadBytesResumable(storageRef, inputImage, 'data_url');
+                    const uploadTask = uploadBytesResumable(storageRef, imageUrl, metadata);
                     uploadTask.on('state_changed', null,
                         (error) => {
                             alert(error);
@@ -41,6 +45,7 @@ const InputBox = () => {
                         () => {
                             getDownloadURL(uploadTask.snapshot.ref)
                                 .then((URL) => {
+                                    console.log("firebase", URL);
                                     setDoc(doc(db, "posts", docu.id), { postImage: URL }, { merge: true });
                                 });
                         }
@@ -59,12 +64,14 @@ const InputBox = () => {
     }
 
     const addPostToImage = (e) => {
-        console.log(e.target.files[0])
+        setImageUrl(e.target.files[0])
+        console.log("image", e.target.files[0])
         const reader = new FileReader();
         if (e.target.files[0]) {
             reader.readAsDataURL(e.target.files[0]);
         }
         reader.onload = (event) => {
+            console.log("+++++", event.target.result);
             setInputImage(event.target.result);
         }
 
@@ -94,16 +101,16 @@ const InputBox = () => {
             <div className='flex items-center justify-evenly'>
                 <div className='flex items-center'>
                     <VideoCameraIcon className='icon-search text-red-500' />
-                    <p>Live Video</p>
+                    <p className='hidden sm:block'>Live Video</p>
                 </div>
                 <div className='flex items-center cursor-pointer' onClick={() => fileRef.current.click()}>
                     <CameraIcon className='icon-search text-green-400' />
                     <input type="file" onChange={addPostToImage} ref={fileRef} hidden />
-                    <p>Photo/Video</p>
+                    <p className='hidden sm:block'>Photo/Video</p>
                 </div>
                 <div className='flex items-center'>
                     <EmojiHappyIcon className='icon-search text-yellow-200' />
-                    <p>Feeling/Activity</p>
+                    <p className='hidden sm:block'>Feeling/Activity</p>
                 </div>
             </div>
         </div>
